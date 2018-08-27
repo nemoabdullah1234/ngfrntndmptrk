@@ -1,0 +1,215 @@
+<h3 class="page_header flex" style="margin-bottom:2px">
+    <span class="text">{{ title }}</span>
+    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" (click)="transitionTotasks()" >×</span></button>-->
+</h3>
+<app-ak-server-validation></app-ak-server-validation>
+<app-ak-growl [messages]="msgs"></app-ak-growl>
+<div class="loading" *ngIf="loader">Loading&#8230;</div>
+
+<form [formGroup]="taskForm" *ngIf="taskForm" (ngSubmit)="onSubmit(taskForm.value)" class="add-form" method="post" enctype="multipart/form-data">
+
+    <section class="inputWrapper inputWrapper1">
+        <div style="width:100%">
+            <section class="inputWrapper">
+                <div class="form-group">
+                    <div>
+                        <label for="name">Name
+                            <span class="color"> *</span>
+                        </label>
+                        <validation-messages class="validation-message" [control]="taskForm.controls.name" [key]="'Name'"></validation-messages>
+                    </div>
+                    <input pInputText type="text" placeholder="Task Name" formControlName="name" class="form-control" id="name" style="width:100%"
+                        autofocus/>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="id">Code
+                            <span class="color"> *</span>
+                        </label>
+                        <validation-messages class="validation-message" [control]="taskForm.controls.code" [key]="'Code'"></validation-messages>
+                    </div>
+                    <input pInputText type="text" placeholder="Task Code" formControlName="code" class="form-control" id="code" style="width:100%"
+                        [readonly]="isEdit" />
+                </div>
+            </section>
+
+            <div class="form-group" style="margin-top: 6px; margin-bottom: 0px;">
+                <p-toggleButton formControlName="status" id="status" class="form-control" onLabel="Active" offLabel="Active" onIcon="fa-check-square-o"
+                    offIcon="fa-square-o" [style]="{'width':'100px'}"></p-toggleButton>
+            </div>
+
+            <section class="inputWrapper">
+                <div class="form-group">
+                    <div>
+                        <label for="type">From Date
+                            <span class="color"> *</span>
+                        </label>
+                        <validation-messages class="validation-message" [control]="taskForm.controls.from" [key]="'From Date'"></validation-messages>
+                    </div>
+                    <p-calendar showTime="showTime" hourFormat="24" formControlName="from" class="from-date search-calendar" [showIcon]="true"
+                        placeholder="From Date" readonlyInput="readonlyInput"></p-calendar>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label for="type">To Date
+                            <span class="color"> *</span>
+                        </label>
+                        <validation-messages class="validation-message" [control]="taskForm.controls.to" [key]="'To Date'"></validation-messages>
+                    </div>
+                    <p-calendar showTime="showTime" hourFormat="24" formControlName="to" class="search-calendar" [showIcon]="true" placeholder="To Date"
+                        readonlyInput="readonlyInput"></p-calendar>
+                </div>
+            </section>
+
+            <section class="inputWrapper">
+                <div class="form-group">
+                    <validation-messages class="validation-message" [control]="taskForm.controls.users" [key]="'User(s)'"></validation-messages>
+                    <app-ak-users [isMultiSelect]= 'true' class="form-control" [selectedUsers]="selectedUsers" (onUsersInit)=onUsersInit($event) [parentFormGroup]="taskForm"></app-ak-users>
+                </div>
+                <div class="form-group"></div>
+            </section>
+
+            <section class="inputWrapper">
+                <div class="form-group">
+                    <div>
+                        <label for="location">Location
+                            <span class="color"> *</span>
+                        </label>
+                        <validation-messages class="validation-message" [control]="taskForm.controls.location" [key]="'Location'"></validation-messages>
+                    </div>
+                    <p-dropdown [options]="addressList" class="form-control" formControlName="location" id="location" filter="filter" placeholder="Select Location"
+                        (onChange)="fetchFloor($event.value)"></p-dropdown>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="floor">Floor</label>
+                    </div>
+                    <p-dropdown [options]="floorList" class="form-control" formControlName="floor" id="floor" filter="filter" placeholder="Select Floor"
+                        (onChange)="fetchZone($event.value)"></p-dropdown>
+                </div>
+            </section>
+
+            <section class="inputWrapper">
+                <div style="margin-top:1%;" class="form-group task-field task-margin"></div>
+            </section>
+
+            <section class="inputWrapper">
+                <div class="form-group">
+                    <div>
+                        <label for="zone">Zone</label>
+                    </div>
+                    <p-dropdown [options]="zoneList" class="form-control" formControlName="zone" id="zone" filter="filter" placeholder="Select Zone"></p-dropdown>
+                </div>
+
+                <div class="form-group"></div>
+            </section>
+
+            <div class="form-group task-field task-margin"></div>
+
+        </div>
+    </section>
+
+    <section class="tabBox">
+        <app-ak-tab-view>
+            <p-tabPanel header="Description" [selected]="true">
+                <div class="inputWrapper">
+                    <div class="form-group">
+                        <div>
+                            <label for="name">URL</label>
+                            <validation-messages class="validation-message" [control]="taskForm.controls.url" [key]="'Url'"></validation-messages>
+                        </div>
+                        <input pInputText type="text" formControlName="url" id="url" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <label for="name">Video URL</label>
+                            <validation-messages class="validation-message" [control]="taskForm.controls.videoUrl" [key]="'Video Url'"></validation-messages>
+                        </div>
+                        <input pInputText type="text" formControlName="videoUrl" id="videoUrl" class="form-control" />
+                    </div>
+                    <div class="form-group increment-textbox">
+                        <div>
+                            <label for="name">Price</label>
+                            <validation-messages class="validation-message" [control]="taskForm.controls.price" [key]="'price'"></validation-messages>
+                        </div>
+                        <input pInputText type="number" formControlName="price" id="price" class="form-control" />
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div>
+                        <label for="">Description
+                            <span class="color"> *</span>
+                        </label>
+                        <validation-messages class="validation-message" [control]="taskForm.controls.description" [key]="'Description'"></validation-messages>
+                    </div>
+                    <!-- <p-editor formControlName="description" id="description" [style]="{'height':'320px'}"></p-editor> -->
+                    <textarea style="width: 100%;" rows="10" class="form-control" formControlName="description" placeholder="Description"></textarea>
+                </div>
+            </p-tabPanel>
+
+            <p-tabPanel header="Notes">
+                <section *ngIf="task.notes" class="inputWrapper">
+                    <div class="form-group" style="font-size: 13px;">
+                        {{task.notes}}
+                    </div>
+                </section>
+            </p-tabPanel>            
+
+            <p-tabPanel header="Images">
+                <app-image-upload-widget class="image-upload" [multiple]=true [savedImages]="savedImages" [images]="images" (onImageListFinalised)="onImageListFinalised($event)"></app-image-upload-widget>
+            </p-tabPanel>          
+
+        </app-ak-tab-view>
+    </section>
+    <div class="btn-wrapper">
+        <div class="buttonWrapper">
+            <button type="button" class="save cancel" (click)="onCancel()" id="task-cancel">Cancel</button>
+            <button type="submit" class="save" label="Submit" [disabled]="!taskForm.valid" id="task-submit">Submit</button>
+        </div>
+    </div>
+    <!-- Dialog Box for Adding Attributes -->
+    <!-- <p-dialog [formGroup]="taskForm.controls.attributes" header="{{dialogTitle}}" [(visible)]="displayDialog" [responsive]="true"
+        showEffect="fade" [modal]="true" [width]="400" [height]="100" class="tab-dialog">
+        <div style="background-color:#ffffff; padding:20px;">
+            <div class="ui-grid ui-grid-responsive ui-fluid">
+                <section class="inputWrapper">
+                    <div class="form-group task-field add-more-name">
+                        <div>
+                            <label for="id">Name
+                                <span class="color"> *</span>
+                            </label>
+                            <validation-messages class="validation-message" [control]="taskForm.controls.attributes.controls.attributeType" [key]="'Name'"></validation-messages>
+                        </div>
+                        <p-dropdown class="form-control" [options]="attributeNameOptionList" formControlName="attributeType" id="attributeType" filter="filter"
+                            placeholder="Select Attribute"></p-dropdown>
+                    </div>
+                </section>
+                <br>
+                <section class="inputWrapper" style="margin-top:20px">
+                    <div class="form-group">
+                        <div>
+                            <label for="id" style="width: 15%">Value
+                                <span class="color"> *</span>
+                            </label>
+                            <validation-messages class="validation-message" [control]="taskForm.controls.attributes.controls.attributeValue" [key]="'Value'"></validation-messages>
+                        </div>
+                        <input pInputText type="text" placeholder="Value" formControlName="attributeValue" class="form-control" id="attributeValue"
+                        />
+                    </div>
+                </section>
+            </div>
+            <p-footer>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix buttonWrapper" style="margin-top:2.5em">
+                    <button type="button" class="save cancel" (click)="closeDialog()" id="category-cancel">Cancel</button>
+                    <button type="button" class="save cancel" (click)="deleteRow()" id="category-delete" *ngIf="showDelete">Delete</button>
+                    <button type="button" class="save" (click)="saveAttributes(taskForm.controls.attributes.value)" label="Save" [disabled]="!taskForm.controls.attributes.valid">Save</button>
+                </div>
+            </p-footer>
+        </div>
+    </p-dialog> -->
+</form>
+<pre>
+ 
+</pre>

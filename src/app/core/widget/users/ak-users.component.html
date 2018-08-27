@@ -1,0 +1,14 @@
+<form [formGroup]="parentFormGroup">
+  <div *ngIf="isMultiSelect">
+    <label>Users
+      <span class="color"> *</span>
+    </label>
+    <p-multiSelect id="users" formControlName="users" defaultLabel="Select Users" [options]="userOptionList" class="form-control"></p-multiSelect>
+  </div>
+  <div class="form-group" *ngIf="!isMultiSelect">
+      <div>
+          <label>Users</label>
+      </div>
+      <p-dropdown *ngIf="!isMultiSelect" id="users" formControlName="users" defaultLabel="Select Users" [options]="userOptionList" class="form-control search-drop" placeholder="Select User" [filter]="true" ></p-dropdown>
+  </div>  
+</form>
